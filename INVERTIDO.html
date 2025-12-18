@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stranger Things | Mundo Invertido</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'stranger-red': '#E71D36',
+                        'stranger-dark': '#0B0B0B',
+                        'stranger-gray': '#1F1F1F',
+                    },
+                    fontFamily: {
+                        'stranger': ['Creepster', 'cursive'],
+                        'body': ['Montserrat', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1605806616949-1e87b487bc2a?q=80&w=1920&auto=format&fit=crop')",
+                        'upside-down': "linear-gradient(to top, rgba(20,0,0,0.9), rgba(0,0,0,0.8))",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<style>
+    body {
+        background-color: #050505;
+        color: #f3f3f3;
+        font-family: 'Montserrat', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Neon Text Effect */
+    .neon-text {
+        text-shadow: 
+            0 0 5px #ff0000,
+            0 0 10px #ff0000,
+            0 0 15px #ff0000;
+        animation: flicker 3s infinite alternate;
+    }
+
+    @keyframes flicker {
+        0%, 18%, 22%, 25%, 53%, 57%, 100% {
+            text-shadow: 
+            0 0 4px #ff0000,
+            0 0 11px #ff0000,
+            0 0 19px #ff0000,
+            0 0 40px #ff0000;
+        }
+        20%, 24%, 80% {       
+            text-shadow: none;
+        }
+    }
+
+    /* Card Hover Effects */
+    .character-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .character-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 0 20px rgba(231, 29, 54, 0.4);
+        border-color: #E71D36;
+    }
+
+    /* Custom Scrollbar for Episode Lists */
+    .episode-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    .episode-list::-webkit-scrollbar-track {
+        background: #111;
+    }
+    .episode-list::-webkit-scrollbar-thumb {
+        background: #E71D36;
+        border-radius: 3px;
+    }
+
+    /* Dust Mote Animation */
+    .dust-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 50;
+    }
+    .dust {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        animation: float 10s infinite linear;
+    }
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        50% { opacity: 0.5; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+</style>
+<body class="bg-stranger-dark">
+
+    <!-- Dust Motes (Upside Down Atmosphere) -->
+    <div class="dust-container" id="dust-container"></div>
+
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 transition-all duration-300 bg-black/80 backdrop-blur-sm border-b border-red-900/30">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#home" class="text-3x1 md:text-4xl font-stranger text-stranger-red neon-text hover:scale-105 transition-transform">
+                    STRANGER THINGS
+                </a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="hover:text-stranger-red transition-colors text-sm uppercase tracking-widest">Home</a>
+                    <a href="#personagens" class="hover:text-stranger-red transition-colors text-sm uppercase tracking-widest">Personagens</a>
+                    <a href="#lendas" class="hover:text-stranger-red transition-colors text-sm uppercase tracking-widest">Lendas</a>
+                    <a href="#temporadas" class="hover:text-stranger-red transition-colors text-sm uppercase tracking-widest">Temporadas</a>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 bg-black/90 absolute top-full left-0 w-full text-center border-b border-red-900">
+                <a href="#home" class="block py-2 hover:text-stranger-red">Home</a>
+                <a href="#personagens" class="block py-2 hover:text-stranger-red">Personagens</a>
+                <a href="#lendas" class="block py-2 hover:text-stranger-red">Lendas</a>
+                <a href="#temporadas" class="block py-2 hover:text-stranger-red">Temporadas</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center bg-hero-pattern bg-cover bg-center bg-no-repeat bg-fixed relative">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h1 class="text-xl md:text-3xl uppercase tracking-[0.5em] mb-4 text-gray-300">Bem-vindo ao</h1>
+            <h2 class="text-5xl md:text-8xl font-stranger text-stranger-red neon-text mb-8">Mundo Invertido</h2>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Entre no mundo de Hawkins e descubra os segredos que habitam nas sombras. 
+                Cuidado com o que espreita no escuro.
+            </p>
+            <a href="#personagens" class="inline-block px-8 py-4 border-2 border-stranger-red text-stranger-red hover:bg-stranger-red hover:text-white transition-all duration-300 uppercase tracking-widest font-bold rounded">
+                <i class="fas fa-flashlight mr-2"></i> Explorar
+            </a>
+        </div>
+    </section>
+
+    <!-- Personagens Section -->
+    <section id="personagens" class="py-20 bg-gradient-to-b from-black to-stranger-gray">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl md:text-5xl font-stranger text-center mb-16 text-white border-b-2 border-stranger-red inline-block mx-auto pb-2 px-10">Personagens</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Eleven -->
+                <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                    <div class="h-80 bg-gray-700 relative group">
+                        <img src="./assets/Eleven.jpg" alt="Eleven" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h5 class="text-2xl font-bold mb-2 text-white">Eleven</h5>
+                        <p class="text-gray-400 text-sm">A garota com poderes telecinéticos. A chave para fechar o portal.</p>
+                    </div>
+                </div>
+
+                <!-- Mike -->
+                <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                    <div class="h-80 bg-gray-700 relative group">
+                        <img src="./assets/Mike.jpg" alt="Mike" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h5 class="text-2xl font-bold mb-2 text-white">Mike Wheeler</h5>
+                        <p class="text-gray-400 text-sm">O coração do grupo. Determinado e leal aos seus amigos.</p>
+                    </div>
+                </div>
+
+                <!-- Dustin -->
+                <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                    <div class="h-80 bg-gray-700 relative group">
+                        <img src="./assets/dustin.jpg" alt="Dustin" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h5 class="text-2xl font-bold mb-2 text-white">Dustin Henderson</h5>
+                        <p class="text-gray-400 text-sm">O gênio da ciência e diplomata do grupo. Nunca desiste.</p>
+                    </div>
+                </div>
+
+                <!-- Lucas -->
+                <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                    <div class="h-80 bg-gray-700 relative group">
+                        <img src="./assets/Lucas.jpg" alt="Lucas" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h5 class="text-2xl font-bold mb-2 text-white">Lucas Sinclair</h5>
+                        <p class="text-gray-400 text-sm">O realista e corajoso. Mestre do estilingue e leal.</p>
+                    </div>
+                </div>
+                 <!-- Will -->
+                 <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                    <div class="h-80 bg-gray-700 relative group">
+                        <img src="./assets/will.jpg" alt="Will" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h5 class="text-2xl font-bold mb-2 text-white">Will Byers</h5>
+                        <p class="text-gray-400 text-sm">O sobrevivente do Mundo Invertido. Sente a presença do mal.</p>
+                    </div>
+                </div>
+                 <!-- Jonathan Byers -->
+                 <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                    <div class="h-80 bg-gray-700 relative group">
+                        <img src="./assets/Jonathan Byers.jpg" alt="Will" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h5 class="text-2xl font-bold mb-2 text-white">Jonathan Byers</h5>
+                        <p class="text-gray-400 text-sm">O verdadeiro irmão mais velho que atrevassa mundos pela familia</p>
+                    </div>
+                </div>
+                <!-- Nancy wheeler -->
+                <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                    <div class="h-80 bg-gray-700 relative group">
+                        <img src="./assets/Nancy.jpg" alt="Will" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h5 class="text-2xl font-bold mb-2 text-white">Nancy wheeler</h5>
+                        <p class="text-gray-400 text-sm">Inteligente, determinada, perfeccionista e corajosa, com um forte instinto investigativo</p>
+                    </div>
+                </div>
+               <!-- Suzie Bingham -->
+               <div class="character-card bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                <div class="h-80 bg-gray-700 relative group">
+                    <img src="./assets/Suzie Bingham.jpg" alt="Will" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="p-6">
+                    <h5 class="text-2xl font-bold mb-2 text-white">Suzie Bingham</h5>
+                    <p class="text-gray-400 text-sm">É muito inteligente e tem acesso a sistemas de computador, o que a torna vital para as missões do grupo. </p>
+                </div>
+            </div> 
+            </div>
+        </div>
+    </section>
+    <!-- Lendas Section -->
+    <section id="lendas" class="py-20 bg-stranger-gray relative overflow-hidden">
+        <!-- Background Element -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-stranger-red opacity-10 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl md:text-5xl font-stranger text-center mb-16 text-white">Personagens Lendários</h2>
+            
+            <div class="flex justify-center">
+                <div class="max-w-4xl w-full bg-zinc-900 rounded-xl overflow-hidden shadow-2xl border border-red-900/50 flex flex-col md:flex-row">
+                    <div class="md:w-1/2 relative h-96 md:h-auto">
+                        <!-- Imagem temática de Rock/Guitarra para representar o Eddie -->
+                        <img src="./assets/Eddie.jpg" alt="Eddie Munson Rocker" class="absolute inset-0 w-full h-full object-cover">
+                    </div>
+                    <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                        <div class="flex items-center mb-4 text-stranger-red">
+                            <i class="fas fa-guitar text-2xl mr-3"></i>
+                            <span class="uppercase tracking-widest font-bold">O Mestre do Hellfire</span>
+                        </div>
+                        <h3 class="text-4xl font-bold mb-4 text-white">Eddie Munson</h3>
+                        <p class="text-gray-400 mb-6 leading-relaxed">
+                            Líder do Hellfire Club, metaleiro e herói improvável. Eddie conquistou a todos com sua coragem no combate final no Mundo Invertido, tocando o solo de guitarra mais épico da história.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+     <!-- VILÕES Section -->
+     <section id="lendas" class="py-20 bg-stranger-gray relative overflow-hidden">
+        <!-- Background Element -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-stranger-red opacity-10 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl md:text-5xl font-stranger text-center mb-16 text-white">VILÕES PRINCIPAIS</h2>
+            
+            <div class="flex justify-center">
+                <div class="max-w-4xl w-full bg-zinc-900 rounded-xl overflow-hidden shadow-2xl border border-red-900/50 flex flex-col md:flex-row">
+                    <div class="md:w-1/2 relative h-96 md:h-auto">
+                        <!-- Imagem temática de Rock/Guitarra para representar o Eddie -->
+                        <img src="./assets/vecna.jpeg" alt="Eddie Munson Rocker" class="absolute inset-0 w-full h-full object-cover">
+                    </div>
+                    <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                        <div class="flex items-center mb-4 text-stranger-red">
+                            <i class="fas fa-skull text-2xl mr-3"></i>
+                            <span class="uppercase tracking-widest font-bold">VECNA</span>
+                        </div>
+                        <h3 class="text-4xl font-bold mb-4 text-white">VECNA</h3>
+                        <p class="text-gray-400 mb-6 leading-relaxed">
+                            Era o primeiro experimento do Dr. Brenner, com o número 001, e tinha uma conexão com as aranhas viúvas negras e com o Mundo Invertido.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Temporadas Section -->
+    <section id="temporadas" class="py-20 bg-black">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl md:text-5xl font-stranger text-center mb-16 text-white">Temporadas</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- S1 -->
+                <div class="group bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-stranger-red transition-all duration-300">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="./assets/temporada01.jpg" alt="Season 1" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+                        <h4 class="absolute bottom-4 left-6 text-3xl font-bold text-white">Temporada 1</h4>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-stranger-red text-sm mb-4 font-bold uppercase tracking-widest">O Desaparecimento de Will</p>
+                        <ul class="text-gray-400 text-sm space-y-2 list-decimal list-inside episode-list max-h-60 overflow-y-auto">
+                            <li>The Vanishing of Will Byers</li>
+                            <li>The Weirdo on Maple Street</li>
+                            <li>Holly, Jolly</li>
+                            <li>The Body</li>
+                            <li>The Flea and the Acrobat</li>
+                            <li>The Monster</li>
+                            <li>The Bathtub</li>
+                            <li>The Upside Down</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- S2 -->
+                <div class="group bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-stranger-red transition-all duration-300">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="./assets/temporada02.jpg" alt="Season 2" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+                        <h4 class="absolute bottom-4 left-6 text-3xl font-bold text-white">Temporada 2</h4>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-stranger-red text-sm mb-4 font-bold uppercase tracking-widest">O Devorador de Mentes</p>
+                        <ul class="text-gray-400 text-sm space-y-2 list-decimal list-inside episode-list max-h-60 overflow-y-auto">
+                            <li>MADMAX</li>
+                            <li>Trick or Treat, Freak</li>
+                            <li>The Pollywog</li>
+                            <li>Will the Wise</li>
+                            <li>Dig Dug</li>
+                            <li>The Spy</li>
+                            <li>The Lost Sister</li>
+                            <li>The Mind Flayer</li>
+                            <li>The Gate</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- S3 -->
+                <div class="group bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-stranger-red transition-all duration-300">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="./assets/temporada03.jpg" alt="Season 3" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+                        <h4 class="absolute bottom-4 left-6 text-3xl font-bold text-white">Temporada 3</h4>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-stranger-red text-sm mb-4 font-bold uppercase tracking-widest">O Verão de 85</p>
+                        <ul class="text-gray-400 text-sm space-y-2 list-decimal list-inside episode-list max-h-60 overflow-y-auto">
+                            <li>Suzie, Do You Copy?</li>
+                            <li>The Mall Rats</li>
+                            <li>The Case of the Missing Lifeguard</li>
+                            <li>The Sauna Test</li>
+                            <li>The Source</li>
+                            <li>The Birthday</li>
+                            <li>The Bite</li>
+                            <li>The Battle of Starcourt</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- S4 -->
+                <div class="group bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-stranger-red transition-all duration-300">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="./assets/temporada04.png" alt="Season 4" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+                        <h4 class="absolute bottom-4 left-6 text-3xl font-bold text-white">Temporada 4</h4>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-stranger-red text-sm mb-4 font-bold uppercase tracking-widest">A Maldição de Vecna</p>
+                        <ul class="text-gray-400 text-sm space-y-2 list-decimal list-inside episode-list max-h-60 overflow-y-auto">
+                            <li>The Hellfire Club</li>
+                            <li>Vecna's Curse</li>
+                            <li>The Monster and the Superhero</li>
+                            <li>Dear Billy</li>
+                            <li>The Nina Project</li>
+                            <li>The Dive</li>
+                            <li>The Massacre at Hawkins Lab</li>
+                            <li>Papa</li>
+                            <li>The Piggyback</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contato" class="py-10 border-t border-zinc-800 bg-zinc-900 text-center">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-stranger text-stranger-red mb-6">Stranger Things</h2>
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="#" class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-stranger-red hover:text-white transition-colors">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-stranger-red hover:text-white transition-colors">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-stranger-red hover:text-white transition-colors">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+            <p class="text-gray-500 text-sm">
+                &copy; 2025 Stranger Things Fan Page. Feito com <i class="fas fa-heart text-stranger-red mx-1"></i> e <i class="fas fa-skull text-gray-400 mx-1"></i> no Mundo Invertido.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Generate Dust Particles
+        const dustContainer = document.getElementById('dust-container');
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('dust');
+            
+            // Random positioning and size
+            const size = Math.random() * 4 + 1;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = `${Math.random() * 100}vh`;
+            
+            // Random animation duration
+            const duration = Math.random() * 10 + 5;
+            particle.style.animationDuration = `${duration}s`;
+            
+            // Random delay
+            particle.style.animationDelay = `-${Math.random() * 10}s`;
+
+            dustContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
